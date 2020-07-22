@@ -1,0 +1,63 @@
+{
+  "name": "react-hoist-hook-class",
+  "version": "1.0.0",
+  "description": "Dont refactor your code, just install this library :D",
+  "author": "x0s3",
+  "license": "MIT",
+  "repository": "x0s3/react-hoist-hook-class",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "source": "src/index.tsx",
+  "engines": {
+    "node": ">=10"
+  },
+  "scripts": {
+    "build": "tsc",
+    "bootstrap": "yarn &&  yarn --cwd example",
+    "example": "yarn --cwd example start",
+    "start": "yarn build -w",
+    "prepare": "yarn build",
+    "test": "yarn test:unit && yarn test:lint && yarn test:build",
+    "test:build": "yarn tsc --noEmit true --incremental false",
+    "test:lint": "eslint 'src/**/*.{js,jsx,ts,tsx}'",
+    "test:unit": "cross-env CI=1 jest --env=jsdom --colors"
+  },
+  "peerDependencies": {
+    "react": "~16.0.0"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^5.11.1",
+    "@testing-library/react": "^10.4.7",
+    "@testing-library/user-event": "^12.0.12",
+    "@types/jest": "^26.0.5",
+    "@types/node": "^14.0.24",
+    "@types/react": "^16.9.27",
+    "@types/react-dom": "^16.9.7",
+    "@typescript-eslint/eslint-plugin": "^3.7.0",
+    "@typescript-eslint/parser": "^3.7.0",
+    "cross-env": "^7.0.2",
+    "eslint": "^7.5.0",
+    "eslint-config-prettier": "^6.7.0",
+    "eslint-config-standard": "^14.1.0",
+    "eslint-config-standard-react": "^9.2.0",
+    "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-node": "^11.0.0",
+    "eslint-plugin-prettier": "^3.1.1",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-react": "^7.17.0",
+    "eslint-plugin-standard": "^4.0.1",
+    "prettier": "^2.0.4",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
+    "react-scripts": "^3.4.1",
+    "ts-jest": "^26.1.3",
+    "typescript": "^3.9.7"
+  },
+  "files": [
+    "dist"
+  ],
+  "jest": {
+    "preset": "ts-jest"
+  }
+}
