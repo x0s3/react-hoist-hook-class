@@ -4,7 +4,7 @@
 
 [![NPM](https://img.shields.io/npm/v/react-hoist-hook-class.svg)](https://www.npmjs.com/package/react-hoist-hook-class) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
-## Install
+## ⚙️ Install
 
 npm:
 
@@ -18,19 +18,36 @@ yarn:
 yarn add react-hoist-hook-class
 ```
 
-## What is this library for?
+## 🧪 What is this library for?
 
 This library makes hook and class interoperability smooth, written in TypeScript, fully typed to ensure each component expects its right props 🎯
 
 (Works with React & React-Native, no external libraries needed 🚀)
 
-## Exported methods
+## 🧬 Exported methods
 
 <table>
   <tr>
     <th>Name</th>
     <th>Usage</th>
     <th>Details</th>
+  </tr>
+  <tr>
+    <td>
+      <code>RenderHook</code>
+    </td>
+    <td>
+      <code>
+        < RenderHook hook={useHook}> <br/>
+          {
+            ({ ...your_props_will_be_infered_:) }) => Your code here
+          } <br/>
+        < / RenderHook>
+      </code>
+    </td>
+    <td>
+      It uses a render props pattern that helps you to use <code>hooks</code> inside Class component
+    </td>
   </tr>
   <tr>
     <td>
@@ -53,11 +70,97 @@ This library makes hook and class interoperability smooth, written in TypeScript
   </tr>
 </table>
 
-## Visual example (GIF)
+## 🤹‍♂️ Visual example (GIF)
 
 ![ExampleHoistHookClass](./assets/example.gif)
 
-## Basic usage (hocs)
+## 👨‍💻 Basic usage (render props)
+
+### RenderHook (no args)
+
+```tsx
+import React, { PureComponent, useState } from 'react';
+import { RenderHook } from 'react-hoist-hook-class';
+
+function useCounter(defaultCounter: number = 0, boost: number = 1) {
+  const [counter, setCounter] = useState<number>(defaultCounter);
+
+  return {
+    counter,
+    increment: () => setCounter((c) => c + boost),
+    decrement: () => setCounter((c) => c - boost),
+    reset: () => setCounter(0)
+  };
+}
+
+export class ClassWithRenderProps extends PureComponent {
+  render() {
+    return (
+      <RenderHook hook={useCounter}>
+        {({ counter, increment, decrement, reset }) => (
+          <div>
+            <h1>COUNTER CLASS RENDER PROPS: {counter}</h1>
+            <button type='button' onClick={increment}>
+              INCREMENT
+            </button>
+            <button type='button' onClick={decrement}>
+              DECREMENT
+            </button>
+            <button type='button' onClick={reset}>
+              RESET
+            </button>
+          </div>
+        )}
+      </RenderHook>
+    );
+  }
+}
+```
+
+### RenderHook (with args)
+
+> If there are no more options, you can use `bind` to bind arguments to the hook
+
+```tsx
+import React, { PureComponent, useState } from 'react';
+import { RenderHook } from 'react-hoist-hook-class';
+
+function useCounter(defaultCounter: number = 0, boost: number = 1) {
+  const [counter, setCounter] = useState<number>(defaultCounter);
+
+  return {
+    counter,
+    increment: () => setCounter((c) => c + boost),
+    decrement: () => setCounter((c) => c - boost),
+    reset: () => setCounter(0)
+  };
+}
+
+export class ClassWithRenderProps extends PureComponent {
+  render() {
+    return (
+      <RenderHook hook={useCounter.bind(null, 10, 50)}>
+        {({ counter, increment, decrement, reset }) => (
+          <div>
+            <h1>COUNTER CLASS RENDER PROPS: {counter}</h1>
+            <button type='button' onClick={increment}>
+              INCREMENT
+            </button>
+            <button type='button' onClick={decrement}>
+              DECREMENT
+            </button>
+            <button type='button' onClick={reset}>
+              RESET
+            </button>
+          </div>
+        )}
+      </RenderHook>
+    );
+  }
+}
+```
+
+## 👩‍💻 Basic usage (hocs)
 
 ### withHook
 

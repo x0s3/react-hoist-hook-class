@@ -1,41 +1,23 @@
 import '@testing-library/jest-dom';
-import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import {
-  ClassComponent,
-  ClassComponentWithInjectedProps,
-  HookComponent,
-  HookMixComponent,
-  useFakeCounter,
+  renderClassComponentCounterHook,
+  renderClassComponentUIHook,
+  renderClassRenderProps,
+  renderWidthAdvancesUsage
+} from './utils';
+import {
   INCREMENT_BUTTON_TEXT,
   INCREMENT_FROM_HOOK_BUTTON_TEXT
-} from './utils';
-
-import { withHook, withUIHook } from '../';
-
-// HOOK-UI
-const renderHookUIClassComponent = () =>
-  render(withUIHook(HookComponent)(ClassComponent));
-
-// HOOK
-const ClassComponentCounterHook = () =>
-  withHook(ClassComponent)(useFakeCounter, 5, 10);
-const renderHookClassComponent = () => render(<ClassComponentCounterHook />);
-
-// ADVANCED USAGE
-const ClassWithCounterHookUI = (props: any) =>
-  withHook(ClassComponentWithInjectedProps, props)(useFakeCounter, 0, 10);
-const WidthAdvancesUsage = () =>
-  withUIHook(HookMixComponent)(ClassWithCounterHookUI);
-const renderAdvancedUsage = () => render(<WidthAdvancesUsage />);
+} from './utils/utils';
 
 describe('React-Hoist-Hook-Class', () => {
   describe('[WITH-UI-HOOK]', () => {
     it('renders with injected props', () => {
       // it renders hook component with class as a children component
       // passing custom hook props to class
-      renderHookUIClassComponent();
+      renderClassComponentUIHook();
 
       // it expects to see hook & class rendering counter value, with the same value equals to 0 (defaultValue)
       expect(screen.getAllByText('Counter: 0')).toHaveLength(2);
@@ -54,7 +36,7 @@ describe('React-Hoist-Hook-Class', () => {
     it('renders with injected props', () => {
       // it renders hook component with class as a children component
       // passing custom hook props to class
-      renderHookClassComponent();
+      renderClassComponentCounterHook();
 
       // it expects to see class rendering counter value, with value equals to 5 (defaultValue)
       expect(screen.getByText('Counter: 5')).toBeInTheDocument();
@@ -73,7 +55,7 @@ describe('React-Hoist-Hook-Class', () => {
     it('renders with custom hook and injected props', () => {
       // it renders hook component with class as a children component
       // passing custom hook props to class and injected props
-      renderAdvancedUsage();
+      renderWidthAdvancesUsage();
 
       // it expects to see class & hook rendering counter value, with values equals to 0 - 100 (defaultValues)
       ['Counter: 100', 'Counter: 0'].forEach((text) => {
@@ -96,6 +78,42 @@ describe('React-Hoist-Hook-Class', () => {
 
       // it expects to see hook rendering counter value, with value equals to 101
       expect(screen.getByText('Counter: 101')).toBeInTheDocument();
+    });
+  });
+
+  describe('[RENDER PROPS COMPONENT]', () => {
+    it('renders with hook props (with no values)', () => {
+      // it renders class component with hook as a render prop
+      // passing custom hook prop to the component
+      renderClassRenderProps();
+
+      const incrementClassButton = screen.getByText(INCREMENT_BUTTON_TEXT);
+
+      // it expects to see class rendering counter value, with value equals to 0 (defaultValue)
+      expect(screen.getByText('Counter: 0')).toBeInTheDocument();
+
+      // it clicks `INCREMENT` buttom from class component and increase counter value by 1 (increment by default)
+      userEvent.click(incrementClassButton);
+
+      // it expects to see class rendering counter value, with value equals to 1
+      expect(screen.getByText('Counter: 1')).toBeInTheDocument();
+    });
+
+    it('renders with hook props (with values)', () => {
+      // it renders class component with hook as a render prop
+      // passing custom hook prop to the component
+      renderClassRenderProps(10, 50);
+
+      const incrementClassButton = screen.getByText(INCREMENT_BUTTON_TEXT);
+
+      // it expects to see class rendering counter value, with value equals to 10 (defaultValue)
+      expect(screen.getByText('Counter: 10')).toBeInTheDocument();
+
+      // it clicks `INCREMENT` buttom from class component and increase counter value by 50 (increment by default)
+      userEvent.click(incrementClassButton);
+
+      // it expects to see class rendering counter value, with value equals to 60
+      expect(screen.getByText('Counter: 60')).toBeInTheDocument();
     });
   });
 });

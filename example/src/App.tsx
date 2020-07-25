@@ -2,6 +2,7 @@ import React from 'react';
 import { ClassWithUIHook } from './WithUIHook';
 import { ClassWithHook } from './WithHook';
 import { AdvancedClassHook } from './WithAdvancedUsage';
+import { ClassWithRenderProps } from './RenderHook';
 
 export default function App() {
   return (
@@ -14,6 +15,9 @@ export default function App() {
       <hr />
       <h1>EXAMPLE USING ADVANCED USAGE:</h1>
       <AdvancedClassHook />
+      <hr />
+      <h1>EXAMPLE USING RENDER PROPS:</h1>
+      <ClassWithRenderProps />
     </div>
   );
 }

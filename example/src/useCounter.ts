@@ -13,16 +13,10 @@ export function useCounter(
 ): CounterProps {
   const [counter, setCounter] = useState<number>(defaultValue);
 
-  const increment = () => setCounter((c) => c + boostNumber);
-
-  const decrement = () => setCounter((c) => c - boostNumber);
-
-  const reset = () => setCounter(0);
-
   return {
     counter,
-    increment,
-    decrement,
-    reset
+    increment: () => setCounter((c) => c + boostNumber),
+    decrement: () => setCounter((c) => c - boostNumber),
+    reset: () => setCounter(0)
   };
 }
