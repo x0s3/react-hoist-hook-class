@@ -26,49 +26,153 @@ This library makes hook and class interoperability smooth, written in TypeScript
 
 ## 🧬 Exported methods
 
-<table>
-  <tr>
-    <th>Name</th>
-    <th>Usage</th>
-    <th>Details</th>
-  </tr>
-  <tr>
-    <td>
-      <code>RenderHook</code>
-    </td>
-    <td>
-      <code>
-        < RenderHook hook={useHook}> <br/>
-          {
-            ({ ...your_props_will_be_infered_:) }) => Your code here
-          } <br/>
-        < / RenderHook>
-      </code>
-    </td>
-    <td>
-      It uses a render props pattern that helps you to use <code>hooks</code> inside Class component
-    </td>
-  </tr>
-  <tr>
-    <td>
-      <code>withHook</code>
-    </td>
-    <td>
-      <code>withHook(ClassComponent [, injectedProps])(useHook [, args])</code>
-    </td>
-    <td>Inject returned values from a custom hook</td>
-  </tr>
-  <tr>
-    <td>
-      <code>withUIHook</code>
-    </td>
-    <td>
-      <code>withUIHook(HookUIComponent)(ClassComponent)</code>
-    </td>
-    <td>Inject Class component as a <code>children</code> to your function component in order to pass custom props to it
-    </td>
-  </tr>
-</table>
+### RenderHook
+
+It uses a render props pattern that helps you to use <code>hooks</code> inside Class component.
+
+#### How it works?
+
+- RenderHook will render hook props into your class component, this component allows to be more flexible while using hooks
+
+example:
+
+```tsx
+import React, { PureComponent } from 'react';
+import { View, Text, Pressable } from 'react-native';
+import { RenderHook } from 'react-hoist-hook-class';
+
+class ClassRenderHook extends PureComponent {
+  render() {
+    return (
+      <RenderHook hook={useXXX} args={[ARGUMENTS_TO_PASS_TO_THE_HOOK]}>
+        {({ returned, values, from, hook }) => (
+          <View>
+            <Text>
+              YOUR CODE: {returned} - {values}
+            </Text>
+            <Pressable onPress={from}>
+              <Text>Your custom {hook}</Text>
+            </Pressable>
+          </View>
+        )}
+      </RenderHook>
+    );
+  }
+}
+```
+
+### withHook
+
+Inject returned values from a custom hook into your class props
+
+#### How it works?
+
+- `withHook` accepts 2 functions
+  - First one accepts a `Class component` as a **first** argument, second and beyond can be props to be injected.
+  - Second one accepts a `hook` as a **first** argument, second and beyond can be hooks arguments.
+
+example:
+
+```tsx
+import React, { PureComponent, useEffect, useState } from 'react';
+import { View } from 'react-native';
+import { withHook } from 'react-hoist-hook-class';
+
+function useWhatever(defaultValue: any) {
+  const [whatever, setWhatever] = useState<any>(defaultValue);
+
+  useEffect(() => {
+    setInterval(setWhatever, 3000, defaultValue);
+  }, [defaultValue]);
+
+  return {
+    whatever,
+    setWhatever
+  };
+}
+
+class ClassComponent extends PureComponent<ReturnType<typeof useWhatever>> {
+  componentDidMount() {
+    setInterval(this.props.setWhatever, 5000, 'For Ever');
+  }
+
+  render() {
+    const { date } = this.props;
+
+    return (
+      <View>
+        <Text>Current date: {date}</Text>
+      </View>
+    );
+  }
+}
+
+// export const ClassUsingHook = ([props]) => withHook(ClassComponent [, props])(useHook [, args]);
+export const ClassUsingHook = () =>
+  withHook(ClassComponent)(useWhatever, 'Not For Ever');
+```
+
+### withUIHook
+
+Inject Class component as a <code>children</code> to your function component in order to pass custom props to it
+
+#### How it works?
+
+- First function accepts your `hook component` and the second one your `class component`
+
+example:
+
+```tsx
+import React, { PureComponent } from 'react';
+import { withUIHook } from 'react-hoist-hook-class';
+
+// don't forget to overload children prop if you are using TS :)
+interface ComponentProps {
+  children(): React.ReactNode;
+  children(props: YourProps): React.ReactNode;
+}
+
+function FunctionComponent({ children }: ComponentProps) {
+  const [anyState, setAnyState] = useState<any>();
+
+  const handleAnyStateAction = (whatever: any) => {
+    setAnyState(whatever);
+  };
+
+  return (
+    <div>
+      <h1>Hello from function component! :) {anyState}</h1>
+      {children({ handleAnyStateAction })}
+    </div>
+  );
+}
+
+class ClassComponent extends PureComponent<YourProps, YourState> {
+  constructor(props: YourProps) {
+    super(props);
+    this.state = {
+      yourStringState: 'Hello from class state! :)'
+    };
+  }
+
+  doClassThings = () => {
+    const { handleAnyStateAction: hookAction } = this.props;
+
+    hookAction(this.state.yourStringState);
+  };
+
+  render() {
+    return (
+      <div>
+        <button onClick={this.doClassThings}>Do something</button>
+      </div>
+    );
+  }
+}
+
+export const HookRenderingClass = () =>
+  withUIHook(FunctionComponent)(ClassComponent);
+```
 
 ## 🤹‍♂️ Visual example (GIF)
 
@@ -125,13 +229,19 @@ export class ClassWithRenderProps extends PureComponent {
 import React, { PureComponent, useState } from 'react';
 import { RenderHook } from 'react-hoist-hook-class';
 
-function useCounter(defaultCounter: number = 0, boost: number = 1) {
+function useCounter(
+  defaultCounter: number = 0,
+  {
+    incrementBy = 1,
+    decrementBy = 1
+  }: { incrementBy?: number; decrementBy?: number } = {}
+) {
   const [counter, setCounter] = useState<number>(defaultCounter);
 
   return {
     counter,
-    increment: () => setCounter((c) => c + boost),
-    decrement: () => setCounter((c) => c - boost),
+    increment: () => setCounter((c) => c + incrementBy),
+    decrement: () => setCounter((c) => c - decrementBy),
     reset: () => setCounter(0)
   };
 }
@@ -139,7 +249,10 @@ function useCounter(defaultCounter: number = 0, boost: number = 1) {
 export class ClassWithRenderProps extends PureComponent {
   render() {
     return (
-      <RenderHook hook={useCounter.bind(null, 10, 50)}>
+      <RenderHook
+        hook={useCounter}
+        args={[10, { incrementBy: 10, decrementBy: 5 }]}
+      >
         {({ counter, increment, decrement, reset }) => (
           <div>
             <h1>COUNTER CLASS RENDER PROPS: {counter}</h1>

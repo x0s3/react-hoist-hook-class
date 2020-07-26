@@ -81,7 +81,7 @@ class ClassRenderPropsHook extends PureComponent<{
     const { counterValue, incrementBy } = this.props;
 
     return (
-      <RenderHook hook={useFakeCounter.bind(null, counterValue, incrementBy)}>
+      <RenderHook hook={useFakeCounter} args={[counterValue, incrementBy]}>
         {({ counter, increment }) => (
           <div>
             <h1>Counter: {counter}</h1>
