@@ -2,7 +2,12 @@
 
 > Don't refactor your code, just install this library 😁
 
-[![NPM](https://img.shields.io/npm/v/react-hoist-hook-class.svg)](https://www.npmjs.com/package/react-hoist-hook-class) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
+[![NPM](https://img.shields.io/npm/v/react-hoist-hook-class.svg)](https://www.npmjs.com/package/react-hoist-hook-class) 
+[![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
+
+
+[![Edit romantic-saha-ewm2s](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/romantic-saha-ewm2s?fontsize=14&hidenavigation=1&theme=dark)
 
 ## ⚙️ Install
 
